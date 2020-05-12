@@ -22,10 +22,24 @@ const App = () => {
     },
   ];
 
-  const [searchTerm, setSearchTerm] = React.useState('React');
+  const useSemiPersistentState = () => {
+    const [searchTerm, setSearchTerm] = React.useState(
+      localStorage.getItem('search')||'');
+
+      //useEffect Hook to trigger side effect to localstorage everytime the seach term changed, it helps opt into the react components life cycle
+      //so we can show the latest searched term which is stored in the localstorage of browser API
+    React.useEffect(() => {
+      localStorage.setItem('search',searchTerm);
+    }, [searchTerm]);
+    
+    return [searchTerm, setSearchTerm];
+  }
+  
+
   const handleSearch = event => {
     setSearchTerm(event.target.value);
   }
+
   const searchedStories = stories.filter((story) => {
       return story.title
         .toLocaleLowerCase()
