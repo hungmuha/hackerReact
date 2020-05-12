@@ -53,16 +53,23 @@ const App = () => {
   return (
     <div className="App">
       <h1>My hacker stories</h1>
-      <InputWithLabel id="search" label="Search" value={searchTerm} onInputChange={handleSearch}> 
+      
+      <InputWithLabel 
+        id="search" 
+        label="Search" 
+        value={searchTerm} 
+        isFocused
+        onInputChange={handleSearch}> 
         <strong>Search:</strong>
       </InputWithLabel>
+
       <hr/>
       <List list={searchedStories}/>
     </div>
   );
 };
 
-const InputWithLabel = ({id,children,value,type = 'text',onInputChange}) => (
+const InputWithLabel = ({id,children,value,isFocused,type = 'text',onInputChange}) => (
   <>
     <label htmlFor={id}>{children}</label>
     &nbsp;
@@ -71,6 +78,7 @@ const InputWithLabel = ({id,children,value,type = 'text',onInputChange}) => (
       type={type}
       value={value}
       onChange={onInputChange}
+      autoFocus = {isFocused}
     />
   </>
  );
