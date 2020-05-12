@@ -22,20 +22,23 @@ const App = () => {
     },
   ];
 
-  const useSemiPersistentState = () => {
-    const [searchTerm, setSearchTerm] = React.useState(
-      localStorage.getItem('search')||'');
+  //custom hook to be reused
+  const useSemiPersistentState = (key,initialState) => {
+    const [value, setValue] = React.useState(
+      localStorage.getItem(key)||initialState);
 
       //useEffect Hook to trigger side effect to localstorage everytime the seach term changed, it helps opt into the react components life cycle
       //so we can show the latest searched term which is stored in the localstorage of browser API
     React.useEffect(() => {
-      localStorage.setItem('search',searchTerm);
-    }, [searchTerm]);
+      localStorage.setItem(key,value);
+    }, [value,key]);
     
-    return [searchTerm, setSearchTerm];
+    return [value, setValue];
   }
   
-  const [searchTerm, setSearchTerm] = useSemiPersistentState();
+  //passsing the key to overvome overwrting allocated item in local storage,
+  //provide initialState key to prevent stale key
+  const [searchTerm, setSearchTerm] = useSemiPersistentState('search','React');
 
   const handleSearch = event => {
     setSearchTerm(event.target.value);
@@ -59,7 +62,7 @@ const App = () => {
 
 const Search = ({search,onSearch} )=> {
   return(
-    <div>
+    <>
       <label htmlFor="search">Search:</label>
       <input 
         type="text" 
@@ -67,7 +70,7 @@ const Search = ({search,onSearch} )=> {
         onChange={onSearch}
         value={search}  
       />
-    </div>
+    </>
   )
 };
 
