@@ -53,7 +53,7 @@ const App = () => {
   return (
     <div className="App">
       <h1>My hacker stories</h1>
-      
+
       <InputWithLabel 
         id="search" 
         label="Search" 
@@ -69,19 +69,29 @@ const App = () => {
   );
 };
 
-const InputWithLabel = ({id,children,value,isFocused,type = 'text',onInputChange}) => (
-  <>
-    <label htmlFor={id}>{children}</label>
-    &nbsp;
-    <input
-      id={id}
-      type={type}
-      value={value}
-      onChange={onInputChange}
-      autoFocus = {isFocused}
-    />
-  </>
- );
+const InputWithLabel = ({id,children,value,isFocused,type = 'text',onInputChange}) => {
+  
+  const inputRef = React.useRef();
+  React.useEffect(() => {
+    if(isFocused && inputRef.current) {
+      inputRef.current.focus();
+    }
+  },[isFocused]);
+
+  return (
+    <>
+      <label htmlFor={id}>{children}</label>
+      &nbsp;
+      <input
+        ref= {inputRef}
+        id={id}
+        type={type}
+        value={value}
+        onChange={onInputChange}
+      />
+    </>
+  );
+}
 
 const List = ({ list }) =>
   list.map(item => <Item key={item.objectID} item={item} />);
