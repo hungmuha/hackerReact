@@ -35,6 +35,7 @@ const App = () => {
     return [searchTerm, setSearchTerm];
   }
   
+  const [searchTerm, setSearchTerm] = useSemiPersistentState();
 
   const handleSearch = event => {
     setSearchTerm(event.target.value);
