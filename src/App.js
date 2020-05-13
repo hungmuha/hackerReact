@@ -2,24 +2,6 @@ import React from 'react';
 import logo from './logo.svg';
 import './App.css';
 
-const initialStories = [
-  {
-    title: 'React',
-    url: 'https://reactjs.org/',
-    author: 'Jordan Walke',
-    num_comments: 3,
-    points: 4,
-    objectID: 0,
-  },
-  {
-    title: 'Redux',
-    url: 'https://redux.js.org/',
-    author: 'Dan Abramov, Andrew Clark',
-    num_comments: 2,
-    points: 5,
-    objectID: 1,
-  },
-];
 //custom hook to be reused
 const useSemiPersistentState = (key,initialState) => {
   const [value, setValue] = React.useState(localStorage.getItem(key)||initialState);
@@ -67,13 +49,7 @@ const storiesReducer = (state, action) => {
   }
 } 
 
-const getAsyncStories = () =>
-  new Promise((resolve,reject) =>
-    setTimeout(
-      () => resolve({ data: { stories: initialStories } }),
-      2000
-    )
-  );
+const API_ENDPOINT= 'https://hn.algolia.com/api/v1/search?query=';
 
 const App = () => {
   //passsing the key to overvome overwrting allocated item in local storage,
@@ -88,11 +64,12 @@ const App = () => {
   React.useEffect(() => {
 
     dispatchStories({ type: 'STORIES_FETCH_INIT'});
-    getAsyncStories()
+    fetch(`${API_ENDPOINT}react`)
+      .then(response => response.json())
       .then(result => {
         dispatchStories({
-          type:'STORIES_SET_STORIES',
-          payload: result.data.stories,
+          type:'STORIES_FETCH_SUCCESS',
+          payload: result.hits,
         });
       })
       .catch(() => 
