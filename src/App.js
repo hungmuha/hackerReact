@@ -22,8 +22,7 @@ const initialStories = [
 ];
 //custom hook to be reused
 const useSemiPersistentState = (key,initialState) => {
-  const [value, setValue] = React.useState(
-    localStorage.getItem(key)||initialState);
+  const [value, setValue] = React.useState(localStorage.getItem(key)||initialState);
 
     //useEffect Hook to trigger side effect to localstorage everytime the seach term changed, it helps opt into the react components life cycle
     //so we can show the latest searched term which is stored in the localstorage of browser API
@@ -43,18 +42,23 @@ const getAsyncStories = () =>
   );
 
 const App = () => {
-
-  
   //passsing the key to overvome overwrting allocated item in local storage,
   //provide initialState key to prevent stale key
   const [searchTerm, setSearchTerm] = useSemiPersistentState('search','React');
-  const [stories,setStories] = React.useState([]);
-  React.useEffect(() => {
-    getAsyncStories().then(result => {
-      setStories(result.data.stories);
-    });
-  },[]);
 
+  const [stories,setStories] = React.useState([]);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [isError, setIsError] = React.useState(false);
+
+  React.useEffect(() => {
+    setIsLoading(true);
+    getAsyncStories()
+      .then(result => {
+        setStories(result.data.stories);
+        setIsLoading(false);
+      })
+      .catch(() => setIsError(true));
+  }, []);
 
   const handleRemoveStory = item => {
     const newStories = stories.filter(
@@ -88,7 +92,15 @@ const App = () => {
       </InputWithLabel>
 
       <hr/>
-      <List list={searchedStories} onRemoveItem={handleRemoveStory}/>
+      {isError && <p>Something went wrong ...</p>}
+      {isLoading ? (
+        <p>Loading ...</p>
+      ) : (
+        <List
+          list={searchedStories}
+          onRemoveItem={handleRemoveStory}
+        />
+      )}
     </div>
   );
 };
