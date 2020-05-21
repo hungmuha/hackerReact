@@ -92,8 +92,9 @@ React.useEffect(() => {
     setSearchTerm(event.target.value);
   }
 
-  const handleSearchSubmit = () => {
+  const handleSearchSubmit = event => {
     setUrl(`${API_ENDPOINT}${searchTerm}`);
+    event.preventDefault();
   };
 
   const searchedStories = stories.data.filter((story) => {
@@ -105,25 +106,16 @@ React.useEffect(() => {
   return (
     <div className="App">
       <h1>My hacker stories</h1>
+      <SearchForm
+        searchTerm={searchTerm}
+        onSearchInput={handleSearchInput}
+        onSearchSubmit={handleSearchSubmit}
+      />
 
-      <InputWithLabel 
-        id="search" 
-        label="Search" 
-        value={searchTerm} 
-        isFocused
-        onInputChange={handleSearchInput}> 
-        <strong>Search:</strong>
-      </InputWithLabel>
-
-      <button
-        type="button"
-        disabled = {!searchTerm}
-        onClick={handleSearchSubmit}
-      >
-        Submit
-      </button>
       <hr/>
+
       {stories.isError && <p>Something went wrong ...</p>}
+      
       {stories.isLoading ? (
         <p>Loading ...</p>
       ) : (
@@ -135,6 +127,25 @@ React.useEffect(() => {
     </div>
   );
 };
+
+const SearchForm = ({searchTerm,onSearchInput,onSearchSubmit}) => {
+  return(
+    <form onSubmit={onSearchSubmit}>
+      <InputWithLabel 
+        id="search" 
+        label="Search" 
+        value={searchTerm} 
+        isFocused
+        onInputChange={onSearchInput}> 
+        <strong>Search:</strong>
+      </InputWithLabel>
+
+      <button type="submit" disabled={!searchTerm}>
+        Submit
+      </button>
+    </form>
+  )
+}
 
 const InputWithLabel = ({id,children,value,isFocused,type = 'text',onInputChange}) => {
 
