@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from 'axios';
 import logo from './logo.svg';
 import './App.css';
 
@@ -6,7 +7,7 @@ import './App.css';
 const useSemiPersistentState = (key,initialState) => {
   const [value, setValue] = React.useState(localStorage.getItem(key)||initialState);
 
-    //useEffect Hook to trigger side effect to localstorage everytime the seach term changed, it helps opt into the react components life cycle
+    //useEffect Hook to trigger side effect to lsocalstorage everytime the seach term changed, it helps opt into the react components life cycle
     //so we can show the latest searched term which is stored in the localstorage of browser API
   React.useEffect(() => {
     localStorage.setItem(key,value);
@@ -66,8 +67,7 @@ const App = () => {
   const handleFetchStories = React.useCallback(() => {
 
     dispatchStories({ type: 'STORIES_FETCH_INIT'});
-    fetch(url)
-      .then(response => response.json())
+    axios.get(url)
       .then(result => {
         dispatchStories({
           type:'STORIES_FETCH_SUCCESS',
